@@ -1,11 +1,5 @@
-file.txt
-Makefile
-shell
-shell.c
-Wall-clock time = 0 milliseconds.
-User CPU time = 0 milliseconds.
-System CPU time = 0 milliseconds.
-Voluntary context switches = 1.
-Involuntary context switches = 0.
-Page faults = 259.
-Page faults that could be satisfied with unreclaimed pages = 0.
+ls
+cd /home/huyennguyen/
+ls
+
+ls
