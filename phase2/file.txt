@@ -1,5 +1,2 @@
 ls
 cd /home/huyennguyen/
-ls
-
-ls

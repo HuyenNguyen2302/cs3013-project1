@@ -19,25 +19,29 @@
 
 long compute_wall_clock_time(struct timeval time_start, struct timeval time_end);
 void print_child_stats(struct rusage child_usage, struct timeval time_start, struct timeval time_end);
-int check_command(char *command, char *command_arr[], int command_index);
-struct rusage subtract_previous_usage(struct rusage previous_usage, struct rusage child_usage, int command_index);
-int execute_command(char *command_arr[], int command_index);
+int check_command(char *command, char *command_arr[]);
+struct rusage subtract_previous_usage(struct rusage previous_usage, struct rusage child_usage);
+int execute_command(char *command_arr[]);
 // void print_struct(struct rusage astruct);
+
+struct rusage previous_usage;
+int command_index = 0; 
 
 int main(int argc, char *argv[]) {
 	char command[MAX_CHAR + 1];
 	int error_code;
 	char *command_arr[MAX_ARG + 1];
-	int command_index = 0; 
+	
 	
 	while (fgets(command, sizeof(command), stdin) != NULL) {
-	  printf("==> %s", command);
-
-	  command[strlen(command) - 1] = '\0';
+		command[strlen(command)] = '\0';
+	  	printf("==> %s\n", command);
+	  	
+	  	
  		memset(command_arr, 0 , sizeof(char *) * (MAX_ARG + 1));
 
 		// check for error
-		error_code = check_command(command, command_arr, command_index);
+		error_code = check_command(command, command_arr);
 		// printf("error code = %d\n", error_code);
 		switch(error_code) {
 			case VIOLATE_MAX_CHAR:
@@ -61,7 +65,7 @@ int main(int argc, char *argv[]) {
 }
 
 // 
-int check_command(char *command, char *command_arr[], int command_index) {	
+int check_command(char *command, char *command_arr[]) {	
 	char *token;
 	int num_arg = 0;
 	token = strtok(command, " "); // get the first token
@@ -81,7 +85,7 @@ int check_command(char *command, char *command_arr[], int command_index) {
 		return VIOLATE_MAX_ARG;
 	}
 	
-	// check number of characters 
+	// check number of charapidcters 
 	if (strlen(command) > MAX_CHAR)
 		return VIOLATE_MAX_CHAR;
 
@@ -91,12 +95,12 @@ int check_command(char *command, char *command_arr[], int command_index) {
 
 	// printf("argument[0] = %s\n", command_arr[0]);
 
-	execute_command(command_arr, command_index);
+	execute_command(command_arr);
 }
 
-struct rusage previous_usage;
 
-int execute_command(char *command_arr[], int command_index) {
+
+int execute_command(char *command_arr[]) {
 	pid_t child_pid;
   int child_status;
 	struct rusage child_usage, total_usage;
@@ -113,6 +117,7 @@ int execute_command(char *command_arr[], int command_index) {
 
 	child_pid = fork();
 
+
 	// printf("child_pid = %d\n", child_pid);
 	if (child_pid == 0) { // this is done by the child process
 		// printf("I'm the child process pid = %d, ppid = %d\n", getpid(), getppid());
@@ -121,14 +126,14 @@ int execute_command(char *command_arr[], int command_index) {
 		return 1;
 	} else { // this is done by the parent
 		gettimeofday(&time_start, NULL);
-	  waitpid(child_pid, &child_status, 0); // wait for child process to terminate
+	  	waitpid(child_pid, &child_status, 0); // wait for child process to terminate
 		if (WIFEXITED(child_status)) {
 			gettimeofday(&time_end, NULL);
 			// printf("Wall-clock time = %ld\n", (long) end.tv_usec - start.tv_usec);
 			getrusage(RUSAGE_CHILDREN, &child_usage);
 
 			total_usage = child_usage;
-			child_usage = subtract_previous_usage(previous_usage, child_usage, command_index);
+			child_usage = subtract_previous_usage(previous_usage, child_usage);
 			previous_usage = total_usage;
 			
 			print_child_stats(child_usage, time_start, time_end);
@@ -137,7 +142,7 @@ int execute_command(char *command_arr[], int command_index) {
 	}
 }
 
-struct rusage subtract_previous_usage(struct rusage previous_usage, struct rusage child_usage, int command_index) {
+struct rusage subtract_previous_usage(struct rusage previous_usage, struct rusage child_usage) {
 	if (command_index != 0) {
 		// printf("SUBTRACT\n");
 		child_usage.ru_utime.tv_sec -= previous_usage.ru_utime.tv_sec;
