@@ -1,5 +1,9 @@
 #include <sys/syscall.h>
+#include <sys/type.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -9,56 +13,89 @@ long compute_wall_clock_time(struct timeval before_time, struct timeval after_ti
 void print_child_statistics(struct rusage child_stats, struct timeval before_time, struct timeval after_time);
 
 int main(int argc, char* argv[]) {
-	// Check to see if a command was actually specified
-	if (argc < 2) {
-		// No command specified, so print an error and exit
-		printf("Need a specified command to run!\n");
-		exit(1);
-	}
+	struct rusage prev_stats;
+	int prev_stats_init = 0;
+	while (1){
+		printf("==>");
+		char input[129];	
+		
+		if (fgets(input, 129, stdin) == NULL) {
+			printf("\n");
+			exit(0);
+		}
+		
+		// Missing command to run
+		if (strlen(input) == 1 && input[strlen(input) - 1] == "\n"){
+			printf("Need a command to run\n");
+			continue;
+		}
 
-	// Extract the command name and the list of arguments
-	char* command_name = argv[1];
-	char** arguments = &argv[1];
-	
-	// Fork a child process and get its PID
-	int pid = fork();
+		char* arguments[33];
+		char* argument = strtok(input, " \n");
+		int i;
+		for (i = 0; i <= 32; i++){
+			arguments[i] = argument;
+			argument = strtok(NULL, " \n");
+		}
+		
+		if (arguments[32] != NULL){
+			printf("You have entered more than 32 arguments\n");
+			continue;
+		}
+		
+		char* command_name = arguments[0];
+		
+		if (strcmp(command_name, "exit") == 0){
+			exit(0);		
+		}
 
-	if (pid != 0) {
-		// In parent process
-		int status;
-		struct timeval before_time, after_time;
+		if (strcmp(command_name, "cd") == 0){
+			chdir(arguments[1]);
+		}
+		
+		// Fork a child process and get its PID
+		int pid = fork();
 
-		// Get the time information before running the command
-		gettimeofday(&before_time, NULL);
+		if (pid != 0) {
+			// In parent process
+			int status;
+			struct timeval before_time, after_time;
 
-		// Wait for the child to finish running the command
-		waitpid(pid, &status, 0);
+			// Get the time information before running the command
+			gettimeofday(&before_time, NULL);
 
-		// If the child terminated normally, print the statistics
-		if (WEXITSTATUS(status) == 0) {
-			// Get the time right after the child process finished
-			gettimeofday(&after_time, NULL);
+			// Wait for the child to finish running the command
+			waitpid(pid, &status, 0);
+
+			// If the child terminated normally, print the statistics
+			if (WEXITSTATUS(status) == 0) {
+				// Get the time right after the child process finished
+				gettimeofday(&after_time, NULL);
 			
-			// Get the statistics of the child process that just finished
-			struct rusage child_stats;
-			getrusage(RUSAGE_CHILDREN, &child_stats);
+				// Get the statistics of the child process that just finished
+				struct rusage child_stats;
+				getrusage(RUSAGE_CHILDREN, &child_stats);
 
-			// Print the statistics
-			print_child_statistics(child_stats, before_time, after_time);
-		}
+				// Print the statistics
+				print_child_statistics(child_stats, prev_stats, prev_stats_init, before_time, after_time);
+
+				prev_stats = child_stats;
+				prev_stats_init = 1;
+			}
 	
-	} else {
-		// In the child process
-		int result = execvp(command_name, arguments);
+		} else {
+			// In the child process
+			int result = execvp(command_name, arguments);
 
-		// Check if the command failed
-		if (result == -1) {
-			// The command failed, so print out he error number and exit
-			printf("Invalid command!\nError Number: %i\n", errno);
-			exit(1);
+			// Check if the command failed
+			if (result == -1) {
+				// The command failed, so print out he error number and exit
+				printf("Invalid command!\nError number: %i\nError message: %s\n", errno, strerror(errno));
+				exit(1);
+			}
 		}
+
 	}
-	
 	return 0;
 }
 
@@ -87,7 +124,8 @@ long compute_wall_clock_time(struct timeval before_time, struct timeval after_ti
 }
 
 // Print the statistics about the child process with the given rusage data
-void print_child_statistics(struct rusage child_stats, struct timeval before_time, struct timeval after_time) {
+void print_child_statistics(struct rusage child_stats, struct rusage prev_stats, int useage_prev_stats, struct timeval before_time, struct timeval after_time) {
+	long difference, user_cpu_time, system_cpu_time, vol
 	long difference = compute_wall_clock_time(before_time, after_time);
 	long user_cpu_time = (child_stats.ru_utime.tv_sec * 1000) + (child_stats.ru_utime.tv_usec / 1000);
 	long system_cpu_time = (child_stats.ru_stime.tv_sec * 1000) + (child_stats.ru_stime.tv_usec / 1000);
