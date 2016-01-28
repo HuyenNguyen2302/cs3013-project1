@@ -1,0 +1,67 @@
+==> sleep 2 &
+pid = 8222
+==> sleep 3
+
+	Wall-clock time = 3007 milliseconds.
+	User CPU time = 0 milliseconds.
+	System CPU time = 0 milliseconds.
+	Voluntary context switches = 2.
+	Involuntary context switches = 1.
+	Page faults = 187.
+	Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+
+STATS AVAILABLE for pid = 8222:
+
+	Wall-clock time = 3007 milliseconds.
+	User CPU time = 0 milliseconds.
+	System CPU time = 0 milliseconds.
+	Voluntary context switches = 2.
+	Involuntary context switches = 0.
+	Page faults = 188.
+	Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+
+==> sleep 10 &
+pid = 8225
+==> sleep 5 &
+pid = 8226
+==> sleep 6
+
+	Wall-clock time = 6000 milliseconds.
+	User CPU time = 0 milliseconds.
+	System CPU time = 0 milliseconds.
+	Voluntary context switches = 2.
+	Involuntary context switches = 0.
+	Page faults = 188.
+	Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+
+STATS AVAILABLE for pid = 8226:
+
+	Wall-clock time = 6001 milliseconds.
+	User CPU time = 0 milliseconds.
+	System CPU time = 0 milliseconds.
+	Voluntary context switches = 2.
+	Involuntary context switches = 0.
+	Page faults = 187.
+	Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+
+==> jobs
+LIST OF ALL PROCESSES:
+	pid = 8225
+==> exit
+Can't exit. There are background processes running.
+STATS AVAILABLE for pid = 8225:
+
+	Wall-clock time = 10005 milliseconds.
+	User CPU time = 0 milliseconds.
+	System CPU time = 0 milliseconds.
+	Voluntary context switches = 2.
+	Involuntary context switches = 0.
+	Page faults = 188.
+	Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+
+==> exit

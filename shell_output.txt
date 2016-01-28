@@ -1,0 +1,48 @@
+total 128
+drwxrwxr-x 2 cuong cuong  4096 Jan 27 22:00 .
+drwxrwxr-x 7 cuong cuong  4096 Jan 27 21:44 ..
+-rw-rw-r-- 1 cuong cuong   352 Jan 27 21:43 Makefile
+-rwxrwxr-x 1 cuong cuong  7683 Jan 27 22:00 runCommand
+-rw-rw-r-- 1 cuong cuong  2787 Jan 27 21:48 runCommand.c
+-rw-rw-r-- 1 cuong cuong  2717 Jan 27 19:20 runCommand.c~
+-rw-rw-r-- 1 cuong cuong    16 Jan 27 21:57 runCommand_input.txt
+-rw-rw-r-- 1 cuong cuong  2448 Jan 27 22:00 runCommand.o
+-rw-rw-r-- 1 cuong cuong   513 Jan 27 21:57 runCommand_output.txt
+-rwxrwxr-x 1 cuong cuong 12320 Jan 27 22:00 shell
+-rwxrwxr-x 1 cuong cuong 12661 Jan 27 22:00 shell2
+-rw-rw-r-- 1 cuong cuong  9990 Jan 27 21:49 shell2.c
+-rw-rw-r-- 1 cuong cuong    57 Jan 27 21:06 shell2_input1.txt
+-rw-rw-r-- 1 cuong cuong    47 Jan 27 21:51 shell2_input2.txt
+-rw-rw-r-- 1 cuong cuong  6624 Jan 27 22:00 shell2.o
+-rw-rw-r-- 1 cuong cuong  1946 Jan 27 21:47 shell2_output1.txt
+-rw-rw-r-- 1 cuong cuong  1629 Jan 27 21:51 shell2_output2.txt
+-rw-rw-r-- 1 cuong cuong  6283 Jan 27 21:49 shell.c
+-rw-rw-r-- 1 cuong cuong    26 Jan 27 22:00 shell_input.txt
+-rw-rw-r-- 1 cuong cuong  4544 Jan 27 22:00 shell.o
+-rw-rw-r-- 1 cuong cuong     0 Jan 27 22:00 shell_output.txt
+/home/cuong/cs3013-project1-final/cs3013-project1/project1
+==> ls -al
+_________________________________________________________________
+|| Wall-clock time = 2 milliseconds.
+|| User CPU time = 0 milliseconds.
+|| System CPU time = 0 milliseconds.
+|| Voluntary context switches = 1.
+|| Involuntary context switches = 1.
+|| Page faults = 387.
+|| Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+==> pwd
+_________________________________________________________________
+|| Wall-clock time = 0 milliseconds.
+|| User CPU time = 0 milliseconds.
+|| System CPU time = 0 milliseconds.
+|| Voluntary context switches = 1.
+|| Involuntary context switches = 1.
+|| Page faults = 184.
+|| Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+==> cd ..
+Current directory is changed to /home/cuong/cs3013-project1-final/cs3013-project1
+==> cd /usr 
+Current directory is changed to /usr
+==> exit

@@ -1,0 +1,10 @@
+Makefile      runCommand.c~	    runCommand_output.txt  shell2.c	      shell2.o		  shell.c
+runCommand    runCommand_input.txt  shell		   shell2_input1.txt  shell2_output1.txt  shell.o
+runCommand.c  runCommand.o	    shell2		   shell2_input2.txt  shell2_output2.txt
+Wall-clock time = 1 milliseconds.
+User CPU time = 0 milliseconds.
+System CPU time = 0 milliseconds.
+Voluntary context switches = 1.
+Involuntary context switches = 22.
+Page faults = 262.
+Page faults that could be satisfied with unreclaimed pages = 0.

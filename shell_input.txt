@@ -1,0 +1,4 @@
+ls -al
+pwd
+cd ..
+cd /usr 

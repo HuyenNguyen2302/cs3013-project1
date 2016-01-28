@@ -1,0 +1,59 @@
+==> sleep 10 &
+pid = 8303
+==> sleep 5 &
+pid = 8304
+==> sleep 7 &
+pid = 8305
+==> sleep 10 &
+pid = 8306
+==> jobs
+LIST OF ALL PROCESSES:
+	pid = 8303
+	pid = 8304
+	pid = 8305
+	pid = 8306
+STATS AVAILABLE for pid = 8304:
+
+	Wall-clock time = 5015 milliseconds.
+	User CPU time = 0 milliseconds.
+	System CPU time = 0 milliseconds.
+	Voluntary context switches = 2.
+	Involuntary context switches = 0.
+	Page faults = 187.
+	Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+
+STATS AVAILABLE for pid = 8305:
+
+	Wall-clock time = 7003 milliseconds.
+	User CPU time = 0 milliseconds.
+	System CPU time = 0 milliseconds.
+	Voluntary context switches = 2.
+	Involuntary context switches = 0.
+	Page faults = 187.
+	Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+
+STATS AVAILABLE for pid = 8306:
+
+	Wall-clock time = 10003 milliseconds.
+	User CPU time = 0 milliseconds.
+	System CPU time = 0 milliseconds.
+	Voluntary context switches = 2.
+	Involuntary context switches = 0.
+	Page faults = 188.
+	Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+
+STATS AVAILABLE for pid = 8303:
+
+	Wall-clock time = 10007 milliseconds.
+	User CPU time = 0 milliseconds.
+	System CPU time = 0 milliseconds.
+	Voluntary context switches = 2.
+	Involuntary context switches = 0.
+	Page faults = 187.
+	Page faults that could be satisfied with unreclaimed pages = 0.
+_________________________________________________________________
+
+==> exit
