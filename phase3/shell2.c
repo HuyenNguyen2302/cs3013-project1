@@ -51,15 +51,26 @@ int main(int argc, char *argv[]) {
 	char command[MAX_CHAR + 1];
 	int error_code;
 	char *command_arr[MAX_ARG + 1];
+	char *command_ptr;
 	process_queue = malloc(sizeof(struct queue));
 	
-	while (fgets(command, sizeof(command), stdin) != NULL) {
-		command[strlen(command)] = '\0';
+	while (1) {
+		if (fgets(command, sizeof(command), stdin) != NULL){
+			command[strlen(command)] = '\0';
+		} else {
+			if (process_queue->head == NULL) {
+				break;		
+		    } else {
+		    	printf("Can't exit. There are background processes running.\n");
+				run_background_process();
+			}
+		}
 	  	printf("==> %s\n", command);
+		command_ptr = command;
  		memset(command_arr, 0 , sizeof(char *) * (MAX_ARG + 1));
 
 		// check for error
-		error_code = check_command(command, command_arr);
+		error_code = check_command(command_ptr, command_arr);
 		switch(error_code) {
 			case VIOLATE_MAX_CHAR:
 				printf("%s\n", "ERROR: VIOLATED MAX NUMBER OF CHARACTERS");
@@ -91,23 +102,25 @@ int main(int argc, char *argv[]) {
 }
 
 // 
-int check_command(char *command, char *command_arr[]) {	
+int check_command(char *command, char *command_arr[]) {
+	//printf("==> %s\n", command);
 	int is_background_process = FALSE;
 	char *token;
 	int num_arg = 0;
-	token = strtok(command, " "); // get the first token
-
+	token = strtok(command, " \n"); // get the first token
+	int last_arg = 0;
+	int found_last = 0;
 	// get the remaining tokens and keep track of number of arguments
 	while (token != NULL) { 
 		// printf("token = %s\n", token);			
 		command_arr[num_arg] = token;
-		token = strtok(NULL, " ");
+		token = strtok(NULL, " \n");
 		// printf("command[0] = %s\n", command_arr[0]);
+		
 		num_arg++;
 	}
 	
 	command_arr[num_arg] = NULL;
-
 
 
 	if (num_arg > MAX_ARG) { 		
@@ -122,11 +135,12 @@ int check_command(char *command, char *command_arr[]) {
 	if (strlen(command) == 0)
 		return EMPTY_COMMAND;
 
+
+
 	if (strcmp(command_arr[num_arg - 1], "&") == 0) {
 		is_background_process = TRUE;
 		command_arr[num_arg - 1] = '\0';
 	}
-
 	execute_command(command_arr, is_background_process);
 
 	return 0;
@@ -136,12 +150,11 @@ int check_command(char *command, char *command_arr[]) {
 // execute commands after all error checking
 int execute_command(char *command_arr[], int is_background_process) {
 	pid_t child_pid;
-    int child_status;
+    	int child_status;
 	struct rusage child_usage;
 	struct timeval time_start, time_end; 
 
-
-
+	gettimeofday(&time_start, NULL);
 	run_background_process();
 	
 	// special case 1: cd command
@@ -187,12 +200,12 @@ int execute_command(char *command_arr[], int is_background_process) {
 	} else { // this is done by the parent
 
 		run_background_process();
-		gettimeofday(&time_start, NULL);
+		
 		if (is_background_process == FALSE) {
 			wait4(child_pid, &child_status, 0, &child_usage);
 		} else {
-			int finish = wait4(child_pid, &child_status, WNOHANG, &child_usage);
-			if (finish <= 0) {
+			//int finish = wait4(child_pid, &child_status, WNOHANG, &child_usage);
+//			if (finish <= 0) {
 				struct process *new_process  = malloc(sizeof(struct process));
 
 				new_process->pid = child_pid;
@@ -204,7 +217,7 @@ int execute_command(char *command_arr[], int is_background_process) {
 				// new_process->time_start = time_start;
 				// new_process->time_end = NULL;
 				enqueue_process(new_process);
-			}			
+//			}			
 		}
 	  	return 0;
 		// if (WIFEXITED(child_status)) {
@@ -226,12 +239,14 @@ void print_all_process() {
 void run_background_process() {
 	int stat_loc;
 	struct process *current = process_queue->head;
+	printf("In run_background_process\n");
+	print_all_process();
 
 	while (current != NULL) {
 		int finish = wait4(current->pid, &stat_loc, WNOHANG, &(current->child_usage));
 		if (finish > 0) {
 			gettimeofday(&(current->time_end), NULL);
-			printf("STATS AVAILABLE for pid = %d\n:", current->pid);
+			printf("STATS AVAILABLE for pid = %d:\n", current->pid);
 			print_child_stats(current->child_usage, current->time_start, current->time_end);
 			current->need_delete = TRUE;
 			dequeue_process();
@@ -243,11 +258,14 @@ void run_background_process() {
 void dequeue_process() {
 	struct process *current = process_queue->head;
 	struct process *pre_current = NULL;
+	struct process *to_be_deleted = NULL;
 
 	// case 1: process to be removed is the head of the queue
 	if ( (*(process_queue->head)).need_delete == TRUE ) {
+		to_be_deleted = process_queue->head;
 		process_queue->head = process_queue->head->next_process;
-		free_struct(process_queue->head);
+		// free_struct(&(process_queue->head)) ?
+		free_struct(&(*to_be_deleted));
 		return;
 	}
 
@@ -276,12 +294,13 @@ void dequeue_process() {
 }
 
 void enqueue_process(struct process *new_process) {
+	
 	if (process_queue->tail == NULL) {
 		process_queue->head = new_process;
 		process_queue->tail = new_process;
 	} else {
 		process_queue->tail->next_process = new_process;
-		process_queue->tail = new_process;
+		new_process = process_queue->tail;
 	}
 }
 
