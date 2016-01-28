@@ -1,2 +1,2 @@
 ls
-cd /home/huyennguyen/
+cd /usr 

@@ -68,13 +68,13 @@ int main(int argc, char *argv[]) {
 int check_command(char *command, char *command_arr[]) {	
 	char *token;
 	int num_arg = 0;
-	token = strtok(command, " "); // get the first token
+	token = strtok(command, " \n"); // get the first token
 
 	// get the remaining tokens and keep track of number of arguments
 	while (token != NULL) { 
 		// printf("token = %s\n", token);			
 		command_arr[num_arg] = token;
-		token = strtok(NULL, " ");
+		token = strtok(NULL, " \n");
 		// printf("command[0] = %s\n", command_arr[0]);
 		num_arg++;
 	}
@@ -121,8 +121,10 @@ int execute_command(char *command_arr[]) {
 	// printf("child_pid = %d\n", child_pid);
 	if (child_pid == 0) { // this is done by the child process
 		// printf("I'm the child process pid = %d, ppid = %d\n", getpid(), getppid());
-		execvp(command_arr[0], &command_arr[0]);
+		int result = execvp(command_arr[0], &command_arr[0]);
+		if (result == -1) {
 		printf("Unknown command\n"); // if execvp returns, it must have failed
+		}
 		return 1;
 	} else { // this is done by the parent
 		gettimeofday(&time_start, NULL);
